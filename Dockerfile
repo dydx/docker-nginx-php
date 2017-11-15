@@ -48,28 +48,10 @@ RUN apk update \
  && rm -rf /tmp/* \
  && ln -s /usr/bin/php7 /usr/bin/php
 
-COPY redis.so /usr/lib/php7/modules/redis.so
-RUN bash -c "echo extension=redis.so > /etc/php7/conf.d/redis.ini"
-
-
 # Install Composer
 RUN mkdir -p /etc/ssl/certs/ \
  && update-ca-certificates --fresh \
  && curl -sS https://getcomposer.org/installer | php && mv composer.phar /usr/bin/composer
-
-#install newrelic php agent and daemon
-ENV NR_INSTALL_SILENT=FALSE
-ENV NR_INSTALL_KEY=${}
-ENV NR_INSTALL_USE_CP_NOT_LN=/usr/bin/newrelic-php/
-ENV NR_INSTALL_PATH=/newrelic-php5-6.5.0.166-linux-musl
-RUN wget "http://download.newrelic.com/php_agent/archive/6.5.0.166/newrelic-php5-6.5.0.166-linux-musl.tar.gz" \
- && gzip -dc newrelic-php5-6.5.0.166-linux-musl.tar.gz | tar xf - \
- && cd newrelic-php5-6.5.0.166-linux-musl \
- && ./newrelic-install install \
- && rm -rf /newrelic-php5-6.5.0.166-linux-musl \
- && rm -rf /newrelic-php5-6.5.0.166-linux-musl.tar.gz \
- && mkdir -p /var/log/newrelic \
- && mkdir -p /var/run/newrelic
 
 # Ensure $HOME is set
 ENV HOME /root
